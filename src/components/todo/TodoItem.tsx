@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { Trash2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { Button } from "@/components/ui/Button";
 import type { Todo } from "@/types/todo";
 
 interface TodoItemProps {
@@ -20,7 +19,7 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, x: -20, transition: { duration: 0.2 } }}
             transition={{ type: "spring", stiffness: 500, damping: 35 }}
-            className="group flex items-center gap-3 rounded-xl px-4 py-3 transition-colors hover:bg-gray-50/80"
+            className="group flex items-center gap-4 rounded-2xl px-4 py-4 transition-colors hover:bg-[#f5f5f7]/50"
         >
             <Checkbox
                 checked={todo.completed}
@@ -30,25 +29,23 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
 
             <span
                 className={`
-          flex-1 text-sm leading-relaxed transition-all duration-300
+          flex-1 text-[19px] font-normal leading-relaxed transition-all duration-300
           ${todo.completed
-                        ? "text-gray-400 line-through"
-                        : "text-gray-800"
+                        ? "text-[#aeaeb2] line-through decoration-[#d2d2d7]"
+                        : "text-[#1d1d1f]"
                     }
         `}
             >
                 {todo.text}
             </span>
 
-            <Button
-                variant="destructive"
-                size="sm"
+            <button
                 onClick={() => onDelete(todo.id)}
                 aria-label={`Delete "${todo.text}"`}
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                className="opacity-0 group-hover:opacity-100 flex items-center justify-center h-8 w-8 rounded-full text-[#aeaeb2] hover:text-[#ff3b30] hover:bg-[#ff3b30]/10 transition-all duration-200 cursor-pointer"
             >
-                <Trash2 className="h-3.5 w-3.5" />
-            </Button>
+                <Trash2 className="h-4 w-4" />
+            </button>
         </motion.div>
     );
 }

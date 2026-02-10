@@ -17,19 +17,19 @@ export function TodoList({ todos, onToggle, onDelete }: TodoListProps) {
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center justify-center py-16 text-center"
+                className="flex flex-col items-center justify-center py-20 text-center"
             >
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50">
-                    <Sun className="h-7 w-7 text-amber-400" />
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#f5f5f7]">
+                    <Sun className="h-7 w-7 text-[#aeaeb2]" />
                 </div>
-                <p className="text-sm font-medium text-gray-500">All caught up!</p>
-                <p className="mt-1 text-xs text-gray-400">Enjoy your day.</p>
+                <p className="text-[15px] font-medium text-[#86868b]">All caught up!</p>
+                <p className="mt-1 text-[13px] text-[#aeaeb2]">Enjoy your day.</p>
             </motion.div>
         );
     }
 
     return (
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-[#e8e8ed]/60">
             <AnimatePresence mode="popLayout" initial={false}>
                 {todos.map((todo) => (
                     <TodoItem

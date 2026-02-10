@@ -17,13 +17,13 @@ export function Checkbox({ checked, onChange, id }: CheckboxProps) {
             aria-checked={checked}
             onClick={onChange}
             className={`
-        relative flex h-5 w-5 shrink-0 items-center justify-center
-        rounded-md border-2 transition-all duration-200
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2
+        relative flex h-[22px] w-[22px] shrink-0 items-center justify-center
+        rounded-full border-[1.5px] transition-all duration-200
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007aff] focus-visible:ring-offset-2
         cursor-pointer
         ${checked
-                    ? "border-indigo-500 bg-indigo-500"
-                    : "border-gray-300 bg-white hover:border-indigo-400"
+                    ? "border-[#1d1d1f] bg-[#1d1d1f]"
+                    : "border-[#d2d2d7] bg-white hover:border-[#86868b]"
                 }
       `}
         >
