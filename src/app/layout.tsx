@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "flow. — Minimalist Task Manager",
-  description:
-    "A beautifully minimal, engineering-grade todo app crafted with care.",
+  title: "flow.",
+  description: "Simplicity in every task.",
   metadataBase: new URL("https://liuxiaozhi.org"),
   openGraph: {
     title: "flow.",
-    description: "A beautifully minimal task manager.",
+    description: "Simplicity in every task.",
     type: "website",
   },
 };
