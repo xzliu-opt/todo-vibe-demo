@@ -102,7 +102,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="pb-8 text-center">
-        <p className="text-[10px] text-[#aeaeb2]">&copy; 2024 Liuxiaozhi.org</p>
+        <p className="text-[10px] text-[#aeaeb2]">&copy; 2026 liuxiaozhi.org</p>
       </footer>
     </div>
   );
