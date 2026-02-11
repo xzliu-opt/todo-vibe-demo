@@ -22,6 +22,7 @@ export function useTodos() {
                     ...t,
                     isFavorite: t.isFavorite ?? false,
                     reminderAt: t.reminderAt ?? null,
+                    subtasks: t.subtasks ?? [],
                 }));
                 setTodos(parsed);
             }
@@ -49,6 +50,7 @@ export function useTodos() {
             completed: false,
             isFavorite: false,
             reminderAt: null,
+            subtasks: [],
             createdAt: Date.now(),
             completedAt: null,
         };
@@ -93,6 +95,43 @@ export function useTodos() {
         );
     }, []);
 
+    const addSubtask = useCallback((parentId: string, text: string) => {
+        const trimmed = text.trim();
+        if (!trimmed) return;
+        setTodos((prev) =>
+            prev.map((todo) =>
+                todo.id === parentId
+                    ? { ...todo, subtasks: [...todo.subtasks, { id: generateId(), text: trimmed, completed: false }] }
+                    : todo
+            )
+        );
+    }, []);
+
+    const toggleSubtask = useCallback((parentId: string, subtaskId: string) => {
+        setTodos((prev) =>
+            prev.map((todo) =>
+                todo.id === parentId
+                    ? {
+                        ...todo,
+                        subtasks: todo.subtasks.map((s) =>
+                            s.id === subtaskId ? { ...s, completed: !s.completed } : s
+                        ),
+                    }
+                    : todo
+            )
+        );
+    }, []);
+
+    const deleteSubtask = useCallback((parentId: string, subtaskId: string) => {
+        setTodos((prev) =>
+            prev.map((todo) =>
+                todo.id === parentId
+                    ? { ...todo, subtasks: todo.subtasks.filter((s) => s.id !== subtaskId) }
+                    : todo
+            )
+        );
+    }, []);
+
     const deleteTodo = useCallback((id: string) => {
         setTodos((prev) => prev.filter((todo) => todo.id !== id));
     }, []);
@@ -113,5 +152,5 @@ export function useTodos() {
         });
     }, []);
 
-    return { todos, isLoaded, addTodo, toggleTodo, toggleFavorite, setReminder, clearReminder, deleteTodo, clearCompleted, reorderTodos };
+    return { todos, isLoaded, addTodo, toggleTodo, toggleFavorite, setReminder, clearReminder, addSubtask, toggleSubtask, deleteSubtask, deleteTodo, clearCompleted, reorderTodos };
 }

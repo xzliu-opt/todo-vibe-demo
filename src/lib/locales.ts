@@ -16,6 +16,7 @@ export interface Translations {
     reminderSet: string;
     reminderDue: string;
     clearReminder: string;
+    addSubtaskPlaceholder: string;
 }
 
 const translations: Record<Language, Translations> = {
@@ -35,6 +36,7 @@ const translations: Record<Language, Translations> = {
         reminderSet: "Reminder set",
         reminderDue: "Reminder!",
         clearReminder: "Clear reminder",
+        addSubtaskPlaceholder: "Add subtask...",
     },
     zh: {
         placeholder: "需要做什么？",
@@ -52,6 +54,7 @@ const translations: Record<Language, Translations> = {
         reminderSet: "已设提醒",
         reminderDue: "提醒！",
         clearReminder: "清除提醒",
+        addSubtaskPlaceholder: "添加子任务...",
     },
 };
 

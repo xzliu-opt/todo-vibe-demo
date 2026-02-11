@@ -26,12 +26,16 @@ interface TodoListProps {
     onToggleFavorite: (id: string) => void;
     onSetReminder: (id: string, timestamp: number) => void;
     onClearReminder: (id: string) => void;
+    onAddSubtask: (parentId: string, text: string) => void;
+    onToggleSubtask: (parentId: string, subtaskId: string) => void;
+    onDeleteSubtask: (parentId: string, subtaskId: string) => void;
+    subtaskPlaceholder?: string;
     emptyStateTitle?: string;
     emptyStateSubtitle?: string;
     labels?: TodoLabels;
 }
 
-export function TodoList({ todos, onToggle, onDelete, onReorder, onToggleFavorite, onSetReminder, onClearReminder, emptyStateTitle, emptyStateSubtitle, labels }: TodoListProps) {
+export function TodoList({ todos, onToggle, onDelete, onReorder, onToggleFavorite, onSetReminder, onClearReminder, onAddSubtask, onToggleSubtask, onDeleteSubtask, subtaskPlaceholder, emptyStateTitle, emptyStateSubtitle, labels }: TodoListProps) {
     const pointerSensor = useSensor(PointerSensor, {
         activationConstraint: { distance: 5 },
     });
@@ -91,6 +95,10 @@ export function TodoList({ todos, onToggle, onDelete, onReorder, onToggleFavorit
                                     onToggleFavorite={onToggleFavorite}
                                     onSetReminder={onSetReminder}
                                     onClearReminder={onClearReminder}
+                                    onAddSubtask={onAddSubtask}
+                                    onToggleSubtask={onToggleSubtask}
+                                    onDeleteSubtask={onDeleteSubtask}
+                                    subtaskPlaceholder={subtaskPlaceholder}
                                     labels={labels}
                                 />
                             </div>

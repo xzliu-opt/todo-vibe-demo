@@ -16,7 +16,7 @@ import { TodoList } from "@/components/todo/TodoList";
 type Filter = "all" | "active" | "completed";
 
 export default function Home() {
-  const { todos, isLoaded, addTodo, toggleTodo, toggleFavorite, setReminder, clearReminder, deleteTodo, clearCompleted, reorderTodos } =
+  const { todos, isLoaded, addTodo, toggleTodo, toggleFavorite, setReminder, clearReminder, addSubtask, toggleSubtask, deleteSubtask, deleteTodo, clearCompleted, reorderTodos } =
     useTodos();
   const [filter, setFilter] = useState<Filter>("all");
   const { isDark, toggle: toggleDark } = useDarkMode();
@@ -172,6 +172,10 @@ export default function Home() {
                 onToggleFavorite={toggleFavorite}
                 onSetReminder={setReminder}
                 onClearReminder={clearReminder}
+                onAddSubtask={addSubtask}
+                onToggleSubtask={toggleSubtask}
+                onDeleteSubtask={deleteSubtask}
+                subtaskPlaceholder={t.addSubtaskPlaceholder}
                 emptyStateTitle={t.emptyStateTitle}
                 emptyStateSubtitle={t.emptyStateSubtitle}
                 labels={{ created: t.created, done: t.done, took: t.took }}
