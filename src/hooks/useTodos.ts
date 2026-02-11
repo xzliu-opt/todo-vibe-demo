@@ -44,6 +44,7 @@ export function useTodos() {
             text: trimmed,
             completed: false,
             createdAt: Date.now(),
+            completedAt: null,
         };
         setTodos((prev) => [newTodo, ...prev]);
     }, []);
@@ -51,7 +52,13 @@ export function useTodos() {
     const toggleTodo = useCallback((id: string) => {
         setTodos((prev) =>
             prev.map((todo) =>
-                todo.id === id ? { ...todo, completed: !todo.completed } : todo
+                todo.id === id
+                    ? {
+                        ...todo,
+                        completed: !todo.completed,
+                        completedAt: !todo.completed ? Date.now() : null,
+                    }
+                    : todo
             )
         );
     }, []);
