@@ -115,9 +115,13 @@ export default function Home() {
 
           {/* Filter Tabs */}
           <div
-            className="flex flex-wrap items-center justify-center gap-2 pb-4"
+            className="flex items-center justify-between px-2 pb-4"
             style={{ borderBottom: "1px solid var(--color-border-light)", transition: "border-color 500ms" }}
           >
+            {/* Invisible spacer to balance the counter on the right */}
+            <span className="text-[11px] font-medium tracking-wide invisible">
+              {activeCount} {t.itemsLeft}
+            </span>
             <div className="flex items-center gap-1">
               {filters.map((f) => (
                 <button
@@ -133,7 +137,7 @@ export default function Home() {
                 </button>
               ))}
             </div>
-            <span className="text-[13px]" style={{ color: "var(--color-text-tertiary)" }}>
+            <span className="text-[11px] font-medium tracking-wide" style={{ color: "var(--color-text-tertiary)" }}>
               {activeCount} {t.itemsLeft}
             </span>
           </div>
