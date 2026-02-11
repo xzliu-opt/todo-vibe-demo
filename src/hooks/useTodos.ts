@@ -21,6 +21,7 @@ export function useTodos() {
                 const parsed: Todo[] = JSON.parse(stored).map((t: Todo) => ({
                     ...t,
                     isFavorite: t.isFavorite ?? false,
+                    reminderAt: t.reminderAt ?? null,
                 }));
                 setTodos(parsed);
             }
@@ -47,6 +48,7 @@ export function useTodos() {
             text: trimmed,
             completed: false,
             isFavorite: false,
+            reminderAt: null,
             createdAt: Date.now(),
             completedAt: null,
         };
@@ -75,6 +77,22 @@ export function useTodos() {
         );
     }, []);
 
+    const setReminder = useCallback((id: string, timestamp: number) => {
+        setTodos((prev) =>
+            prev.map((todo) =>
+                todo.id === id ? { ...todo, reminderAt: timestamp } : todo
+            )
+        );
+    }, []);
+
+    const clearReminder = useCallback((id: string) => {
+        setTodos((prev) =>
+            prev.map((todo) =>
+                todo.id === id ? { ...todo, reminderAt: null } : todo
+            )
+        );
+    }, []);
+
     const deleteTodo = useCallback((id: string) => {
         setTodos((prev) => prev.filter((todo) => todo.id !== id));
     }, []);
@@ -95,5 +113,5 @@ export function useTodos() {
         });
     }, []);
 
-    return { todos, isLoaded, addTodo, toggleTodo, toggleFavorite, deleteTodo, clearCompleted, reorderTodos };
+    return { todos, isLoaded, addTodo, toggleTodo, toggleFavorite, setReminder, clearReminder, deleteTodo, clearCompleted, reorderTodos };
 }

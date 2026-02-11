@@ -24,12 +24,14 @@ interface TodoListProps {
     onDelete: (id: string) => void;
     onReorder: (activeId: string, overId: string) => void;
     onToggleFavorite: (id: string) => void;
+    onSetReminder: (id: string, timestamp: number) => void;
+    onClearReminder: (id: string) => void;
     emptyStateTitle?: string;
     emptyStateSubtitle?: string;
     labels?: TodoLabels;
 }
 
-export function TodoList({ todos, onToggle, onDelete, onReorder, onToggleFavorite, emptyStateTitle, emptyStateSubtitle, labels }: TodoListProps) {
+export function TodoList({ todos, onToggle, onDelete, onReorder, onToggleFavorite, onSetReminder, onClearReminder, emptyStateTitle, emptyStateSubtitle, labels }: TodoListProps) {
     const pointerSensor = useSensor(PointerSensor, {
         activationConstraint: { distance: 5 },
     });
@@ -87,6 +89,8 @@ export function TodoList({ todos, onToggle, onDelete, onReorder, onToggleFavorit
                                     onToggle={onToggle}
                                     onDelete={onDelete}
                                     onToggleFavorite={onToggleFavorite}
+                                    onSetReminder={onSetReminder}
+                                    onClearReminder={onClearReminder}
                                     labels={labels}
                                 />
                             </div>

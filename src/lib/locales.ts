@@ -13,6 +13,9 @@ export interface Translations {
     created: string;
     done: string;
     took: string;
+    reminderSet: string;
+    reminderDue: string;
+    clearReminder: string;
 }
 
 const translations: Record<Language, Translations> = {
@@ -29,6 +32,9 @@ const translations: Record<Language, Translations> = {
         created: "Created",
         done: "Done",
         took: "Took",
+        reminderSet: "Reminder set",
+        reminderDue: "Reminder!",
+        clearReminder: "Clear reminder",
     },
     zh: {
         placeholder: "需要做什么？",
@@ -43,6 +49,9 @@ const translations: Record<Language, Translations> = {
         created: "创建于",
         done: "完成于",
         took: "用时",
+        reminderSet: "已设提醒",
+        reminderDue: "提醒！",
+        clearReminder: "清除提醒",
     },
 };
 

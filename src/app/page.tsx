@@ -5,21 +5,24 @@ import { ArrowUpRight, Github } from "lucide-react";
 import { useTodos } from "@/hooks/useTodos";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useReminders } from "@/hooks/useReminders";
 import { getTranslations } from "@/lib/locales";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
+import { ReminderToast } from "@/components/ui/ReminderToast";
 import { TodoInput } from "@/components/todo/TodoInput";
 import { TodoList } from "@/components/todo/TodoList";
 
 type Filter = "all" | "active" | "completed";
 
 export default function Home() {
-  const { todos, isLoaded, addTodo, toggleTodo, toggleFavorite, deleteTodo, clearCompleted, reorderTodos } =
+  const { todos, isLoaded, addTodo, toggleTodo, toggleFavorite, setReminder, clearReminder, deleteTodo, clearCompleted, reorderTodos } =
     useTodos();
   const [filter, setFilter] = useState<Filter>("all");
   const { isDark, toggle: toggleDark } = useDarkMode();
   const { language, toggle: toggleLang } = useLanguage();
   const t = getTranslations(language);
+  const { activeToast, dismissToast } = useReminders(todos, clearReminder);
 
   const filteredTodos = todos
     .filter((todo) => {
@@ -46,6 +49,12 @@ export default function Home() {
 
   return (
     <div className="flex min-h-dvh flex-col" style={{ transition: "background-color 500ms, color 500ms" }}>
+      {/* Reminder Toast */}
+      <ReminderToast
+        text={activeToast?.text ?? null}
+        label={t.reminderDue}
+        onDismiss={dismissToast}
+      />
       {/* Top-right controls */}
       <div className="fixed top-6 right-6 z-50 flex items-center gap-4">
         {/* Blog Nav Link */}
@@ -161,6 +170,8 @@ export default function Home() {
                 onDelete={deleteTodo}
                 onReorder={reorderTodos}
                 onToggleFavorite={toggleFavorite}
+                onSetReminder={setReminder}
+                onClearReminder={clearReminder}
                 emptyStateTitle={t.emptyStateTitle}
                 emptyStateSubtitle={t.emptyStateSubtitle}
                 labels={{ created: t.created, done: t.done, took: t.took }}
