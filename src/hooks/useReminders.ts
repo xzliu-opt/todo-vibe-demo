@@ -8,12 +8,51 @@ interface ReminderNotification {
     text: string;
 }
 
+const ORIGINAL_TITLE = "flow.";
+
 export function useReminders(
     todos: Todo[],
-    clearReminder: (id: string) => void
+    clearReminder: (id: string) => void,
+    reminderLabel: string
 ) {
     const [activeToast, setActiveToast] = useState<ReminderNotification | null>(null);
     const permissionGranted = useRef(false);
+    const flashIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    // Stop the title flash
+    const stopFlash = useCallback(() => {
+        if (flashIntervalRef.current) {
+            clearInterval(flashIntervalRef.current);
+            flashIntervalRef.current = null;
+        }
+        if (typeof document !== "undefined") {
+            document.title = ORIGINAL_TITLE;
+        }
+    }, []);
+
+    // Start the title flash
+    const startFlash = useCallback((label: string) => {
+        stopFlash();
+        let on = true;
+        flashIntervalRef.current = setInterval(() => {
+            if (typeof document !== "undefined") {
+                document.title = on ? `🔔 ${label}` : ORIGINAL_TITLE;
+            }
+            on = !on;
+        }, 1000);
+    }, [stopFlash]);
+
+    // Restore title when the window gains focus
+    useEffect(() => {
+        const handleFocus = () => stopFlash();
+        window.addEventListener("focus", handleFocus);
+        return () => window.removeEventListener("focus", handleFocus);
+    }, [stopFlash]);
+
+    // Cleanup flash interval on unmount
+    useEffect(() => {
+        return () => stopFlash();
+    }, [stopFlash]);
 
     // Request notification permission on mount
     useEffect(() => {
@@ -50,6 +89,9 @@ export function useReminders(
                     // In-app toast
                     setActiveToast({ id: todo.id, text: todo.text });
 
+                    // Flash the tab title
+                    startFlash(reminderLabel);
+
                     // Clear the reminder so it doesn't fire again
                     clearReminder(todo.id);
                     break; // one at a time to avoid notification spam
@@ -60,11 +102,12 @@ export function useReminders(
         check(); // run immediately
         const interval = setInterval(check, 30_000);
         return () => clearInterval(interval);
-    }, [todos, clearReminder]);
+    }, [todos, clearReminder, reminderLabel, startFlash]);
 
     const dismissToast = useCallback(() => {
         setActiveToast(null);
-    }, []);
+        stopFlash();
+    }, [stopFlash]);
 
     return { activeToast, dismissToast };
 }

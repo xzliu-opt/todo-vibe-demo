@@ -22,7 +22,7 @@ export default function Home() {
   const { isDark, toggle: toggleDark } = useDarkMode();
   const { language, toggle: toggleLang } = useLanguage();
   const t = getTranslations(language);
-  const { activeToast, dismissToast } = useReminders(todos, clearReminder);
+  const { activeToast, dismissToast } = useReminders(todos, clearReminder, t.reminderDue);
 
   const filteredTodos = todos
     .filter((todo) => {
