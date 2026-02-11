@@ -19,7 +19,10 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, x: -20, transition: { duration: 0.2 } }}
             transition={{ type: "spring", stiffness: 500, damping: 35 }}
-            className="group flex items-center gap-4 rounded-2xl px-4 py-4 transition-colors hover:bg-[#f5f5f7]/50"
+            className="group flex items-center gap-4 rounded-2xl px-4 py-4 transition-colors"
+            style={{ ["--hover-bg" as string]: "var(--color-item-hover)" }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-item-hover)")}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
         >
             <Checkbox
                 checked={todo.completed}
@@ -28,13 +31,12 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
             />
 
             <span
-                className={`
-          flex-1 text-[19px] font-normal leading-relaxed transition-all duration-300
-          ${todo.completed
-                        ? "text-[#aeaeb2] line-through decoration-[#d2d2d7]"
-                        : "text-[#1d1d1f]"
-                    }
-        `}
+                className="flex-1 text-[19px] font-normal leading-relaxed transition-all duration-300"
+                style={{
+                    color: todo.completed ? "var(--color-text-tertiary)" : "var(--color-text)",
+                    textDecoration: todo.completed ? "line-through" : "none",
+                    textDecorationColor: todo.completed ? "var(--color-border)" : undefined,
+                }}
             >
                 {todo.text}
             </span>
@@ -42,7 +44,16 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
             <button
                 onClick={() => onDelete(todo.id)}
                 aria-label={`Delete "${todo.text}"`}
-                className="opacity-0 group-hover:opacity-100 flex items-center justify-center h-8 w-8 rounded-full text-[#aeaeb2] hover:text-[#ff3b30] hover:bg-[#ff3b30]/10 transition-all duration-200 cursor-pointer"
+                className="opacity-0 group-hover:opacity-100 flex items-center justify-center h-8 w-8 rounded-full transition-all duration-200 cursor-pointer"
+                style={{ color: "var(--color-text-tertiary)" }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "var(--color-danger)";
+                    e.currentTarget.style.backgroundColor = "var(--color-danger-bg)";
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "var(--color-text-tertiary)";
+                    e.currentTarget.style.backgroundColor = "transparent";
+                }}
             >
                 <Trash2 className="h-4 w-4" />
             </button>

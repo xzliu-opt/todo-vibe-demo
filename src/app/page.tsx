@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useTodos } from "@/hooks/useTodos";
+import { useDarkMode } from "@/hooks/useDarkMode";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { TodoInput } from "@/components/todo/TodoInput";
 import { TodoList } from "@/components/todo/TodoList";
 
@@ -11,6 +13,7 @@ export default function Home() {
   const { todos, isLoaded, addTodo, toggleTodo, deleteTodo, clearCompleted } =
     useTodos();
   const [filter, setFilter] = useState<Filter>("all");
+  const { isDark, toggle: toggleDark } = useDarkMode();
 
   const filteredTodos = todos.filter((todo) => {
     if (filter === "active") return !todo.completed;
@@ -28,45 +31,61 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col" style={{ transition: "background-color 500ms, color 500ms" }}>
+      <ThemeToggle isDark={isDark} toggle={toggleDark} />
       <main className="flex flex-1 flex-col items-center px-4 pt-16 pb-8 sm:px-6 sm:pt-24">
         {/* Header */}
         <header className="mb-12 text-center">
-          <h1 className="text-7xl font-thin tracking-tighter text-[#1d1d1f]">
+          <h1
+            className="text-7xl font-thin tracking-tighter"
+            style={{ color: "var(--color-text)", transition: "color 500ms" }}
+          >
             flow.
           </h1>
-          <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.2em] text-[#86868b]">
+          <p
+            className="mt-3 text-[11px] font-medium uppercase tracking-[0.2em]"
+            style={{ color: "var(--color-text-secondary)" }}
+          >
             Crafted by Mia &amp; Serge
           </p>
         </header>
 
         {/* Floating Surface */}
-        <div className="w-full max-w-2xl rounded-[32px] sm:rounded-[40px] bg-white shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] p-6 sm:p-10 md:p-12">
+        <div
+          className="w-full max-w-2xl rounded-[32px] sm:rounded-[40px] p-6 sm:p-10 md:p-12"
+          style={{
+            backgroundColor: "var(--color-surface)",
+            boxShadow: "var(--shadow-surface)",
+            border: "var(--border-surface)",
+            transition: "background-color 500ms, box-shadow 500ms, border 500ms",
+          }}
+        >
           {/* Input */}
           <div className="mb-8">
             <TodoInput onAdd={addTodo} />
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex flex-wrap items-center justify-center gap-2 border-b border-[#e8e8ed] pb-4">
+          <div
+            className="flex flex-wrap items-center justify-center gap-2 pb-4"
+            style={{ borderBottom: "1px solid var(--color-border-light)", transition: "border-color 500ms" }}
+          >
             <div className="flex items-center gap-1">
               {filters.map((f) => (
                 <button
                   key={f.key}
                   onClick={() => setFilter(f.key)}
-                  className={`
-                    rounded-full px-4 py-1.5 text-[13px] font-medium transition-all duration-200 cursor-pointer
-                    ${filter === f.key
-                      ? "bg-[#f5f5f7] text-[#1d1d1f]"
-                      : "text-[#86868b] hover:text-[#1d1d1f] hover:bg-[#f5f5f7]/60"
-                    }
-                  `}
+                  className="rounded-full px-4 py-1.5 text-[13px] font-medium transition-all duration-200 cursor-pointer"
+                  style={{
+                    backgroundColor: filter === f.key ? "var(--color-filter-active-bg)" : "transparent",
+                    color: filter === f.key ? "var(--color-filter-active-text)" : "var(--color-text-secondary)",
+                  }}
                 >
                   {f.label}
                 </button>
               ))}
             </div>
-            <span className="text-[13px] text-[#aeaeb2]">
+            <span className="text-[13px]" style={{ color: "var(--color-text-tertiary)" }}>
               {activeCount} left
             </span>
           </div>
@@ -75,7 +94,13 @@ export default function Home() {
           <div className="min-h-[240px]">
             {!isLoaded ? (
               <div className="flex items-center justify-center py-20">
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#e8e8ed] border-t-[#1d1d1f]" />
+                <div
+                  className="h-5 w-5 animate-spin rounded-full border-2"
+                  style={{
+                    borderColor: "var(--color-spinner-track)",
+                    borderTopColor: "var(--color-spinner-head)",
+                  }}
+                />
               </div>
             ) : (
               <TodoList
@@ -88,10 +113,16 @@ export default function Home() {
 
           {/* Clear completed */}
           {completedCount > 0 && (
-            <div className="flex justify-center border-t border-[#e8e8ed] pt-4">
+            <div
+              className="flex justify-center pt-4"
+              style={{ borderTop: "1px solid var(--color-border-light)", transition: "border-color 500ms" }}
+            >
               <button
                 onClick={clearCompleted}
-                className="text-[13px] font-medium text-[#aeaeb2] hover:text-[#ff3b30] transition-colors cursor-pointer"
+                className="text-[13px] font-medium transition-colors cursor-pointer"
+                style={{ color: "var(--color-text-tertiary)" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-danger)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-tertiary)")}
               >
                 Clear completed ({completedCount})
               </button>
@@ -102,7 +133,9 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="pb-8 text-center">
-        <p className="text-[10px] text-[#aeaeb2]">&copy; 2026 liuxiaozhi.org</p>
+        <p className="text-[10px]" style={{ color: "var(--color-text-quaternary)" }}>
+          &copy; 2026 liuxiaozhi.org
+        </p>
       </footer>
     </div>
   );
