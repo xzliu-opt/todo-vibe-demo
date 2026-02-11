@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { GripVertical, Trash2 } from "lucide-react";
+import { GripVertical, Star, Trash2 } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -18,10 +18,11 @@ interface TodoItemProps {
     todo: Todo;
     onToggle: (id: string) => void;
     onDelete: (id: string) => void;
+    onToggleFavorite: (id: string) => void;
     labels?: TodoLabels;
 }
 
-export function TodoItem({ todo, onToggle, onDelete, labels }: TodoItemProps) {
+export function TodoItem({ todo, onToggle, onDelete, onToggleFavorite, labels }: TodoItemProps) {
     const l = labels ?? { created: "Created", done: "Done", took: "Took" };
     const {
         attributes,
@@ -81,6 +82,28 @@ export function TodoItem({ todo, onToggle, onDelete, labels }: TodoItemProps) {
                 onChange={() => onToggle(todo.id)}
                 id={`todo-checkbox-${todo.id}`}
             />
+
+            {/* Favorite star */}
+            <motion.button
+                onClick={() => onToggleFavorite(todo.id)}
+                aria-label={todo.isFavorite ? "Remove from favorites" : "Add to favorites"}
+                className="flex items-center justify-center h-6 w-6 mt-0.5 cursor-pointer transition-opacity duration-150"
+                style={{
+                    opacity: todo.isFavorite ? 1 : undefined,
+                }}
+                whileTap={{ scale: 1.4 }}
+                transition={{ type: "spring", stiffness: 500, damping: 15 }}
+            >
+                <Star
+                    size={14}
+                    strokeWidth={1.5}
+                    className={todo.isFavorite ? "" : "opacity-0 group-hover:opacity-40 transition-opacity duration-150"}
+                    style={{
+                        color: todo.isFavorite ? "#facc15" : "var(--color-text-tertiary)",
+                        fill: todo.isFavorite ? "#facc15" : "none",
+                    }}
+                />
+            </motion.button>
 
             <div className="flex-1 min-w-0">
                 <span

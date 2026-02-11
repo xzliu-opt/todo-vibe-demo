@@ -23,12 +23,13 @@ interface TodoListProps {
     onToggle: (id: string) => void;
     onDelete: (id: string) => void;
     onReorder: (activeId: string, overId: string) => void;
+    onToggleFavorite: (id: string) => void;
     emptyStateTitle?: string;
     emptyStateSubtitle?: string;
     labels?: TodoLabels;
 }
 
-export function TodoList({ todos, onToggle, onDelete, onReorder, emptyStateTitle, emptyStateSubtitle, labels }: TodoListProps) {
+export function TodoList({ todos, onToggle, onDelete, onReorder, onToggleFavorite, emptyStateTitle, emptyStateSubtitle, labels }: TodoListProps) {
     const pointerSensor = useSensor(PointerSensor, {
         activationConstraint: { distance: 5 },
     });
@@ -85,6 +86,7 @@ export function TodoList({ todos, onToggle, onDelete, onReorder, emptyStateTitle
                                     todo={todo}
                                     onToggle={onToggle}
                                     onDelete={onDelete}
+                                    onToggleFavorite={onToggleFavorite}
                                     labels={labels}
                                 />
                             </div>

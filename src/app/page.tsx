@@ -14,7 +14,7 @@ import { TodoList } from "@/components/todo/TodoList";
 type Filter = "all" | "active" | "completed";
 
 export default function Home() {
-  const { todos, isLoaded, addTodo, toggleTodo, deleteTodo, clearCompleted, reorderTodos } =
+  const { todos, isLoaded, addTodo, toggleTodo, toggleFavorite, deleteTodo, clearCompleted, reorderTodos } =
     useTodos();
   const [filter, setFilter] = useState<Filter>("all");
   const { isDark, toggle: toggleDark } = useDarkMode();
@@ -27,7 +27,13 @@ export default function Home() {
       if (filter === "completed") return todo.completed;
       return true;
     })
-    .sort((a, b) => Number(a.completed) - Number(b.completed));
+    .sort((a, b) => {
+      // 1. Active items before completed
+      if (a.completed !== b.completed) return Number(a.completed) - Number(b.completed);
+      // 2. Within active items, favorites first
+      if (!a.completed && a.isFavorite !== b.isFavorite) return Number(b.isFavorite) - Number(a.isFavorite);
+      return 0;
+    });
 
   const activeCount = todos.filter((t) => !t.completed).length;
   const completedCount = todos.filter((t) => t.completed).length;
@@ -150,6 +156,7 @@ export default function Home() {
                 onToggle={toggleTodo}
                 onDelete={deleteTodo}
                 onReorder={reorderTodos}
+                onToggleFavorite={toggleFavorite}
                 emptyStateTitle={t.emptyStateTitle}
                 emptyStateSubtitle={t.emptyStateSubtitle}
                 labels={{ created: t.created, done: t.done, took: t.took }}

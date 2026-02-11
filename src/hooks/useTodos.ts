@@ -18,7 +18,10 @@ export function useTodos() {
         try {
             const stored = localStorage.getItem(STORAGE_KEY);
             if (stored) {
-                const parsed: Todo[] = JSON.parse(stored);
+                const parsed: Todo[] = JSON.parse(stored).map((t: Todo) => ({
+                    ...t,
+                    isFavorite: t.isFavorite ?? false,
+                }));
                 setTodos(parsed);
             }
         } catch {
@@ -43,6 +46,7 @@ export function useTodos() {
             id: generateId(),
             text: trimmed,
             completed: false,
+            isFavorite: false,
             createdAt: Date.now(),
             completedAt: null,
         };
@@ -59,6 +63,14 @@ export function useTodos() {
                         completedAt: !todo.completed ? Date.now() : null,
                     }
                     : todo
+            )
+        );
+    }, []);
+
+    const toggleFavorite = useCallback((id: string) => {
+        setTodos((prev) =>
+            prev.map((todo) =>
+                todo.id === id ? { ...todo, isFavorite: !todo.isFavorite } : todo
             )
         );
     }, []);
@@ -83,5 +95,5 @@ export function useTodos() {
         });
     }, []);
 
-    return { todos, isLoaded, addTodo, toggleTodo, deleteTodo, clearCompleted, reorderTodos };
+    return { todos, isLoaded, addTodo, toggleTodo, toggleFavorite, deleteTodo, clearCompleted, reorderTodos };
 }
