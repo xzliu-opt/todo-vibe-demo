@@ -17,7 +17,7 @@ export function TodoList({ todos, onToggle, onDelete }: TodoListProps) {
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center justify-center py-20 text-center"
+                className="flex flex-col items-center justify-center min-h-[240px] py-20 text-center"
             >
                 <div
                     className="mb-4 flex h-16 w-16 items-center justify-center rounded-full"
