@@ -2,6 +2,19 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Sun } from "lucide-react";
+import {
+    DndContext,
+    closestCenter,
+    PointerSensor,
+    TouchSensor,
+    useSensor,
+    useSensors,
+    type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+    SortableContext,
+    verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { TodoItem } from "./TodoItem";
 import type { Todo } from "@/types/todo";
 
@@ -9,9 +22,18 @@ interface TodoListProps {
     todos: Todo[];
     onToggle: (id: string) => void;
     onDelete: (id: string) => void;
+    onReorder: (activeId: string, overId: string) => void;
 }
 
-export function TodoList({ todos, onToggle, onDelete }: TodoListProps) {
+export function TodoList({ todos, onToggle, onDelete, onReorder }: TodoListProps) {
+    const pointerSensor = useSensor(PointerSensor, {
+        activationConstraint: { distance: 5 },
+    });
+    const touchSensor = useSensor(TouchSensor, {
+        activationConstraint: { delay: 150, tolerance: 5 },
+    });
+    const sensors = useSensors(pointerSensor, touchSensor);
+
     if (todos.length === 0) {
         return (
             <motion.div
@@ -35,22 +57,37 @@ export function TodoList({ todos, onToggle, onDelete }: TodoListProps) {
         );
     }
 
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (over && active.id !== over.id) {
+            onReorder(String(active.id), String(over.id));
+        }
+    };
+
     return (
-        <div style={{ borderColor: "var(--color-divider)" }}>
-            <AnimatePresence mode="popLayout" initial={false}>
-                {todos.map((todo, i) => (
-                    <div
-                        key={todo.id}
-                        style={i > 0 ? { borderTop: "1px solid var(--color-divider)" } : undefined}
-                    >
-                        <TodoItem
-                            todo={todo}
-                            onToggle={onToggle}
-                            onDelete={onDelete}
-                        />
-                    </div>
-                ))}
-            </AnimatePresence>
-        </div>
+        <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+        >
+            <SortableContext items={todos.map((t) => t.id)} strategy={verticalListSortingStrategy}>
+                <div style={{ borderColor: "var(--color-divider)" }}>
+                    <AnimatePresence mode="popLayout" initial={false}>
+                        {todos.map((todo, i) => (
+                            <div
+                                key={todo.id}
+                                style={i > 0 ? { borderTop: "1px solid var(--color-divider)" } : undefined}
+                            >
+                                <TodoItem
+                                    todo={todo}
+                                    onToggle={onToggle}
+                                    onDelete={onDelete}
+                                />
+                            </div>
+                        ))}
+                    </AnimatePresence>
+                </div>
+            </SortableContext>
+        </DndContext>
     );
 }

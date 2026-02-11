@@ -64,5 +64,17 @@ export function useTodos() {
         setTodos((prev) => prev.filter((todo) => !todo.completed));
     }, []);
 
-    return { todos, isLoaded, addTodo, toggleTodo, deleteTodo, clearCompleted };
+    const reorderTodos = useCallback((activeId: string, overId: string) => {
+        setTodos((prev) => {
+            const oldIndex = prev.findIndex((t) => t.id === activeId);
+            const newIndex = prev.findIndex((t) => t.id === overId);
+            if (oldIndex === -1 || newIndex === -1) return prev;
+            const updated = [...prev];
+            const [moved] = updated.splice(oldIndex, 1);
+            updated.splice(newIndex, 0, moved);
+            return updated;
+        });
+    }, []);
+
+    return { todos, isLoaded, addTodo, toggleTodo, deleteTodo, clearCompleted, reorderTodos };
 }

@@ -10,16 +10,18 @@ import { TodoList } from "@/components/todo/TodoList";
 type Filter = "all" | "active" | "completed";
 
 export default function Home() {
-  const { todos, isLoaded, addTodo, toggleTodo, deleteTodo, clearCompleted } =
+  const { todos, isLoaded, addTodo, toggleTodo, deleteTodo, clearCompleted, reorderTodos } =
     useTodos();
   const [filter, setFilter] = useState<Filter>("all");
   const { isDark, toggle: toggleDark } = useDarkMode();
 
-  const filteredTodos = todos.filter((todo) => {
-    if (filter === "active") return !todo.completed;
-    if (filter === "completed") return todo.completed;
-    return true;
-  });
+  const filteredTodos = todos
+    .filter((todo) => {
+      if (filter === "active") return !todo.completed;
+      if (filter === "completed") return todo.completed;
+      return true;
+    })
+    .sort((a, b) => Number(a.completed) - Number(b.completed));
 
   const activeCount = todos.filter((t) => !t.completed).length;
   const completedCount = todos.filter((t) => t.completed).length;
@@ -107,6 +109,7 @@ export default function Home() {
                 todos={filteredTodos}
                 onToggle={toggleTodo}
                 onDelete={deleteTodo}
+                onReorder={reorderTodos}
               />
             )}
           </div>

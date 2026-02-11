@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Trash2 } from "lucide-react";
+import { GripVertical, Trash2 } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Checkbox } from "@/components/ui/Checkbox";
 import type { Todo } from "@/types/todo";
 
@@ -12,18 +14,54 @@ interface TodoItemProps {
 }
 
 export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id: todo.id, disabled: todo.completed });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        zIndex: isDragging ? 10 : undefined,
+    };
+
     return (
         <motion.div
-            layout
+            ref={setNodeRef}
+            layout={!isDragging}
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, x: -20, transition: { duration: 0.2 } }}
             transition={{ type: "spring", stiffness: 500, damping: 35 }}
-            className="group flex items-center gap-4 rounded-2xl px-4 py-4 transition-colors"
-            style={{ ["--hover-bg" as string]: "var(--color-item-hover)" }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-item-hover)")}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+            className="group flex items-center gap-3 rounded-2xl px-4 py-4 transition-colors"
+            style={style}
+            onMouseEnter={(e) => {
+                if (!isDragging) e.currentTarget.style.backgroundColor = "var(--color-item-hover)";
+            }}
+            onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+            }}
         >
+            {/* Drag handle — only for active items */}
+            {!todo.completed ? (
+                <button
+                    {...attributes}
+                    {...listeners}
+                    aria-label="Drag to reorder"
+                    className="opacity-0 group-hover:opacity-60 flex items-center justify-center h-6 w-6 cursor-grab active:cursor-grabbing transition-opacity duration-150 touch-none"
+                    style={{ color: "var(--color-text-tertiary)" }}
+                >
+                    <GripVertical size={16} />
+                </button>
+            ) : (
+                <div className="w-6" />
+            )}
+
             <Checkbox
                 checked={todo.completed}
                 onChange={() => onToggle(todo.id)}
