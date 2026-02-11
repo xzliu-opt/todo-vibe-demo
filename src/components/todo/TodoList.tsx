@@ -15,7 +15,7 @@ import {
     SortableContext,
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { TodoItem } from "./TodoItem";
+import { TodoItem, type TodoLabels } from "./TodoItem";
 import type { Todo } from "@/types/todo";
 
 interface TodoListProps {
@@ -23,9 +23,12 @@ interface TodoListProps {
     onToggle: (id: string) => void;
     onDelete: (id: string) => void;
     onReorder: (activeId: string, overId: string) => void;
+    emptyStateTitle?: string;
+    emptyStateSubtitle?: string;
+    labels?: TodoLabels;
 }
 
-export function TodoList({ todos, onToggle, onDelete, onReorder }: TodoListProps) {
+export function TodoList({ todos, onToggle, onDelete, onReorder, emptyStateTitle, emptyStateSubtitle, labels }: TodoListProps) {
     const pointerSensor = useSensor(PointerSensor, {
         activationConstraint: { distance: 5 },
     });
@@ -48,10 +51,10 @@ export function TodoList({ todos, onToggle, onDelete, onReorder }: TodoListProps
                     <Sun className="h-7 w-7" style={{ color: "var(--color-text-tertiary)" }} />
                 </div>
                 <p className="text-[15px] font-medium" style={{ color: "var(--color-text-secondary)" }}>
-                    All caught up!
+                    {emptyStateTitle ?? "All caught up!"}
                 </p>
                 <p className="mt-1 text-[13px]" style={{ color: "var(--color-text-tertiary)" }}>
-                    Enjoy your day.
+                    {emptyStateSubtitle ?? "Enjoy your day."}
                 </p>
             </motion.div>
         );
@@ -82,6 +85,7 @@ export function TodoList({ todos, onToggle, onDelete, onReorder }: TodoListProps
                                     todo={todo}
                                     onToggle={onToggle}
                                     onDelete={onDelete}
+                                    labels={labels}
                                 />
                             </div>
                         ))}

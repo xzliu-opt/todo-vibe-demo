@@ -8,13 +8,21 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { formatTime, formatDuration } from "@/lib/time";
 import type { Todo } from "@/types/todo";
 
+export interface TodoLabels {
+    created: string;
+    done: string;
+    took: string;
+}
+
 interface TodoItemProps {
     todo: Todo;
     onToggle: (id: string) => void;
     onDelete: (id: string) => void;
+    labels?: TodoLabels;
 }
 
-export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
+export function TodoItem({ todo, onToggle, onDelete, labels }: TodoItemProps) {
+    const l = labels ?? { created: "Created", done: "Done", took: "Took" };
     const {
         attributes,
         listeners,
@@ -96,11 +104,11 @@ export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
                 >
                     {todo.completed && todo.completedAt ? (
                         <>
-                            Created {formatTime(todo.createdAt)} · Done{" "}
-                            {formatTime(todo.completedAt)} · Took {duration}
+                            {l.created} {formatTime(todo.createdAt)} · {l.done}{" "}
+                            {formatTime(todo.completedAt)} · {l.took} {duration}
                         </>
                     ) : (
-                        <>Created {formatTime(todo.createdAt)}</>
+                        <>{l.created} {formatTime(todo.createdAt)}</>
                     )}
                 </motion.div>
             </div>

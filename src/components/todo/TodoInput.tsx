@@ -5,9 +5,10 @@ import { Plus } from "lucide-react";
 
 interface TodoInputProps {
     onAdd: (text: string) => void;
+    placeholder?: string;
 }
 
-export function TodoInput({ onAdd }: TodoInputProps) {
+export function TodoInput({ onAdd, placeholder = "What needs to be done?" }: TodoInputProps) {
     const [value, setValue] = useState("");
 
     const handleSubmit = (e: FormEvent) => {
@@ -30,7 +31,7 @@ export function TodoInput({ onAdd }: TodoInputProps) {
             <input
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="What needs to be done?"
+                placeholder={placeholder}
                 aria-label="New todo"
                 autoComplete="off"
                 className="flex-1 min-w-0 border-none bg-transparent px-5 py-4 text-center text-[19px] font-normal focus:outline-none focus:ring-0"

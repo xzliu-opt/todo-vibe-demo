@@ -4,7 +4,10 @@ import { useState } from "react";
 import { ArrowUpRight, Github } from "lucide-react";
 import { useTodos } from "@/hooks/useTodos";
 import { useDarkMode } from "@/hooks/useDarkMode";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getTranslations } from "@/lib/locales";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { TodoInput } from "@/components/todo/TodoInput";
 import { TodoList } from "@/components/todo/TodoList";
 
@@ -15,6 +18,8 @@ export default function Home() {
     useTodos();
   const [filter, setFilter] = useState<Filter>("all");
   const { isDark, toggle: toggleDark } = useDarkMode();
+  const { language, toggle: toggleLang } = useLanguage();
+  const t = getTranslations(language);
 
   const filteredTodos = todos
     .filter((todo) => {
@@ -28,9 +33,9 @@ export default function Home() {
   const completedCount = todos.filter((t) => t.completed).length;
 
   const filters: { key: Filter; label: string }[] = [
-    { key: "all", label: "All" },
-    { key: "active", label: "Active" },
-    { key: "completed", label: "Completed" },
+    { key: "all", label: t.filterAll },
+    { key: "active", label: t.filterActive },
+    { key: "completed", label: t.filterCompleted },
   ];
 
   return (
@@ -50,6 +55,9 @@ export default function Home() {
           Blog
           <ArrowUpRight size={10} />
         </a>
+
+        {/* Language Toggle */}
+        <LanguageToggle language={language} toggle={toggleLang} />
 
         {/* GitHub Link */}
         <a
@@ -80,7 +88,7 @@ export default function Home() {
             className="mt-3 text-[11px] font-medium uppercase tracking-[0.2em]"
             style={{ color: "var(--color-text-secondary)" }}
           >
-            Crafted by Mia &amp; Serge
+            {t.credits}
           </p>
         </header>
 
@@ -96,7 +104,7 @@ export default function Home() {
         >
           {/* Input */}
           <div className="mb-8">
-            <TodoInput onAdd={addTodo} />
+            <TodoInput onAdd={addTodo} placeholder={t.placeholder} />
           </div>
 
           {/* Filter Tabs */}
@@ -120,7 +128,7 @@ export default function Home() {
               ))}
             </div>
             <span className="text-[13px]" style={{ color: "var(--color-text-tertiary)" }}>
-              {activeCount} left
+              {activeCount} {t.itemsLeft}
             </span>
           </div>
 
@@ -142,6 +150,9 @@ export default function Home() {
                 onToggle={toggleTodo}
                 onDelete={deleteTodo}
                 onReorder={reorderTodos}
+                emptyStateTitle={t.emptyStateTitle}
+                emptyStateSubtitle={t.emptyStateSubtitle}
+                labels={{ created: t.created, done: t.done, took: t.took }}
               />
             )}
           </div>
@@ -159,7 +170,7 @@ export default function Home() {
                 onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-danger)")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-tertiary)")}
               >
-                Clear completed ({completedCount})
+                {t.clearCompleted} ({completedCount})
               </button>
             </div>
           )}
