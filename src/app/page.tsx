@@ -16,8 +16,23 @@ import { TodoList } from "@/components/todo/TodoList";
 type Filter = "all" | "active" | "completed";
 
 export default function Home() {
-  const { todos, isLoaded, addTodo, toggleTodo, toggleFavorite, setReminder, clearReminder, addSubtask, toggleSubtask, deleteSubtask, deleteTodo, clearCompleted, reorderTodos } =
-    useTodos();
+  const {
+    todos,
+    isLoaded,
+    addTodo,
+    toggleTodo,
+    updateTodo,
+    toggleFavorite,
+    setReminder,
+    clearReminder,
+    addSubtask,
+    updateSubtask,
+    toggleSubtask,
+    deleteSubtask,
+    deleteTodo,
+    clearCompleted,
+    reorderTodos,
+  } = useTodos();
   const [filter, setFilter] = useState<Filter>("all");
   const { isDark, toggle: toggleDark } = useDarkMode();
   const { language, toggle: toggleLang } = useLanguage();
@@ -167,12 +182,14 @@ export default function Home() {
               <TodoList
                 todos={filteredTodos}
                 onToggle={toggleTodo}
+                onUpdate={updateTodo}
                 onDelete={deleteTodo}
                 onReorder={reorderTodos}
                 onToggleFavorite={toggleFavorite}
                 onSetReminder={setReminder}
                 onClearReminder={clearReminder}
                 onAddSubtask={addSubtask}
+                onUpdateSubtask={updateSubtask}
                 onToggleSubtask={toggleSubtask}
                 onDeleteSubtask={deleteSubtask}
                 subtaskPlaceholder={t.addSubtaskPlaceholder}

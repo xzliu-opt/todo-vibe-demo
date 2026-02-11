@@ -21,12 +21,14 @@ import type { Todo } from "@/types/todo";
 interface TodoListProps {
     todos: Todo[];
     onToggle: (id: string) => void;
+    onUpdate: (id: string, text: string) => void;
     onDelete: (id: string) => void;
     onReorder: (activeId: string, overId: string) => void;
     onToggleFavorite: (id: string) => void;
     onSetReminder: (id: string, timestamp: number) => void;
     onClearReminder: (id: string) => void;
     onAddSubtask: (parentId: string, text: string) => void;
+    onUpdateSubtask: (parentId: string, subtaskId: string, text: string) => void;
     onToggleSubtask: (parentId: string, subtaskId: string) => void;
     onDeleteSubtask: (parentId: string, subtaskId: string) => void;
     subtaskPlaceholder?: string;
@@ -35,7 +37,7 @@ interface TodoListProps {
     labels?: TodoLabels;
 }
 
-export function TodoList({ todos, onToggle, onDelete, onReorder, onToggleFavorite, onSetReminder, onClearReminder, onAddSubtask, onToggleSubtask, onDeleteSubtask, subtaskPlaceholder, emptyStateTitle, emptyStateSubtitle, labels }: TodoListProps) {
+export function TodoList({ todos, onToggle, onUpdate, onDelete, onReorder, onToggleFavorite, onSetReminder, onClearReminder, onAddSubtask, onUpdateSubtask, onToggleSubtask, onDeleteSubtask, subtaskPlaceholder, emptyStateTitle, emptyStateSubtitle, labels }: TodoListProps) {
     const pointerSensor = useSensor(PointerSensor, {
         activationConstraint: { distance: 5 },
     });
@@ -91,11 +93,13 @@ export function TodoList({ todos, onToggle, onDelete, onReorder, onToggleFavorit
                                 <TodoItem
                                     todo={todo}
                                     onToggle={onToggle}
+                                    onUpdate={onUpdate}
                                     onDelete={onDelete}
                                     onToggleFavorite={onToggleFavorite}
                                     onSetReminder={onSetReminder}
                                     onClearReminder={onClearReminder}
                                     onAddSubtask={onAddSubtask}
+                                    onUpdateSubtask={onUpdateSubtask}
                                     onToggleSubtask={onToggleSubtask}
                                     onDeleteSubtask={onDeleteSubtask}
                                     subtaskPlaceholder={subtaskPlaceholder}

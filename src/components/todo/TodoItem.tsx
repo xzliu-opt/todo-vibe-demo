@@ -19,21 +19,27 @@ export interface TodoLabels {
 interface TodoItemProps {
     todo: Todo;
     onToggle: (id: string) => void;
+    onUpdate: (id: string, text: string) => void;
     onDelete: (id: string) => void;
     onToggleFavorite: (id: string) => void;
     onSetReminder: (id: string, timestamp: number) => void;
     onClearReminder: (id: string) => void;
     onAddSubtask: (parentId: string, text: string) => void;
+    onUpdateSubtask: (parentId: string, subtaskId: string, text: string) => void;
     onToggleSubtask: (parentId: string, subtaskId: string) => void;
     onDeleteSubtask: (parentId: string, subtaskId: string) => void;
     subtaskPlaceholder?: string;
     labels?: TodoLabels;
 }
 
-export function TodoItem({ todo, onToggle, onDelete, onToggleFavorite, onSetReminder, onClearReminder, onAddSubtask, onToggleSubtask, onDeleteSubtask, subtaskPlaceholder, labels }: TodoItemProps) {
+export function TodoItem({ todo, onToggle, onUpdate, onDelete, onToggleFavorite, onSetReminder, onClearReminder, onAddSubtask, onUpdateSubtask, onToggleSubtask, onDeleteSubtask, subtaskPlaceholder, labels }: TodoItemProps) {
     const [showClearHint, setShowClearHint] = useState(false);
     const [expanded, setExpanded] = useState(false);
     const dateInputRef = useRef<HTMLInputElement>(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editValue, setEditValue] = useState(todo.text);
+    const inputRef = useRef<HTMLInputElement>(null);
+
     const l = labels ?? { created: "Created", done: "Done", took: "Took" };
     const {
         attributes,
@@ -59,6 +65,27 @@ export function TodoItem({ todo, onToggle, onDelete, onToggleFavorite, onSetRemi
     const subtaskCount = todo.subtasks.length;
     const doneCount = todo.subtasks.filter((s) => s.completed).length;
     const hasSubtasks = subtaskCount > 0;
+
+    const handleEditStart = () => {
+        if (todo.completed) return; // Prevent editing completed todos
+        setIsEditing(true);
+        setEditValue(todo.text);
+        // Focus will be handled by autoFocus on input
+    };
+
+    const handleEditSave = () => {
+        if (editValue.trim() && editValue.trim() !== todo.text) {
+            onUpdate(todo.id, editValue.trim());
+        } else {
+            setEditValue(todo.text); // Revert if empty or unchanged
+        }
+        setIsEditing(false);
+    };
+
+    const handleEditCancel = () => {
+        setEditValue(todo.text);
+        setIsEditing(false);
+    };
 
     return (
         <div>
@@ -142,16 +169,37 @@ export function TodoItem({ todo, onToggle, onDelete, onToggleFavorite, onSetRemi
                 </motion.button>
 
                 <div className="flex-1 min-w-0">
-                    <span
-                        className="text-[19px] font-normal leading-relaxed transition-all duration-300 block"
-                        style={{
-                            color: todo.completed ? "var(--color-text-tertiary)" : "var(--color-text)",
-                            textDecoration: todo.completed ? "line-through" : "none",
-                            textDecorationColor: todo.completed ? "var(--color-border)" : undefined,
-                        }}
-                    >
-                        {todo.text}
-                    </span>
+                    {isEditing ? (
+                        <input
+                            ref={inputRef}
+                            type="text"
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            onBlur={handleEditSave}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") handleEditSave();
+                                else if (e.key === "Escape") handleEditCancel();
+                            }}
+                            autoFocus
+                            className="w-full bg-transparent text-[19px] font-normal leading-relaxed outline-none"
+                            style={{
+                                color: "var(--color-text)",
+                                caretColor: "var(--color-primary)",
+                            }}
+                        />
+                    ) : (
+                        <span
+                            onClick={handleEditStart}
+                            className="text-[19px] font-normal leading-relaxed transition-all duration-300 block cursor-text"
+                            style={{
+                                color: todo.completed ? "var(--color-text-tertiary)" : "var(--color-text)",
+                                textDecoration: todo.completed ? "line-through" : "none",
+                                textDecorationColor: todo.completed ? "var(--color-border)" : undefined,
+                            }}
+                        >
+                            {todo.text}
+                        </span>
+                    )}
 
                     {/* Subtask progress — only show when collapsed and has subtasks */}
                     {!expanded && hasSubtasks && (
@@ -295,9 +343,10 @@ export function TodoItem({ todo, onToggle, onDelete, onToggleFavorite, onSetRemi
                             parentId={todo.id}
                             subtasks={todo.subtasks}
                             onAdd={onAddSubtask}
+                            onUpdate={onUpdateSubtask}
                             onToggle={onToggleSubtask}
                             onDelete={onDeleteSubtask}
-                            placeholder={subtaskPlaceholder ?? "Add subtask..."}
+                            placeholder={subtaskPlaceholder ?? "Add a subtask"}
                         />
                     )}
                 </AnimatePresence>

@@ -10,14 +10,18 @@ interface SubtaskListProps {
     parentId: string;
     subtasks: Subtask[];
     onAdd: (parentId: string, text: string) => void;
+    onUpdate: (parentId: string, subtaskId: string, text: string) => void;
     onToggle: (parentId: string, subtaskId: string) => void;
     onDelete: (parentId: string, subtaskId: string) => void;
     placeholder: string;
 }
 
-export function SubtaskList({ parentId, subtasks, onAdd, onToggle, onDelete, placeholder }: SubtaskListProps) {
+export function SubtaskList({ parentId, subtasks, onAdd, onUpdate, onToggle, onDelete, placeholder }: SubtaskListProps) {
     const [inputValue, setInputValue] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editValue, setEditValue] = useState("");
+    const editInputRef = useRef<HTMLInputElement>(null);
 
     const handleSubmit = useCallback(() => {
         if (inputValue.trim()) {
@@ -25,6 +29,23 @@ export function SubtaskList({ parentId, subtasks, onAdd, onToggle, onDelete, pla
             setInputValue("");
         }
     }, [inputValue, parentId, onAdd]);
+
+    const handleEditStart = (subtask: Subtask) => {
+        setEditingId(subtask.id);
+        setEditValue(subtask.text);
+    };
+
+    const handleEditSave = (subtaskId: string) => {
+        if (editValue.trim()) {
+            onUpdate(parentId, subtaskId, editValue.trim());
+        }
+        setEditingId(null);
+    };
+
+    const handleEditCancel = () => {
+        setEditingId(null);
+        setEditValue("");
+    };
 
     return (
         <>
@@ -65,16 +86,34 @@ export function SubtaskList({ parentId, subtasks, onAdd, onToggle, onDelete, pla
                                     id={`subtask-${subtask.id}`}
                                     size="sm"
                                 />
-                                <span
-                                    className="flex-1 text-[13px] font-normal leading-snug transition-all duration-200"
-                                    style={{
-                                        color: subtask.completed ? "var(--color-text-tertiary)" : "var(--color-text-secondary)",
-                                        textDecoration: subtask.completed ? "line-through" : "none",
-                                        textDecorationColor: subtask.completed ? "var(--color-border)" : undefined,
-                                    }}
-                                >
-                                    {subtask.text}
-                                </span>
+                                {editingId === subtask.id ? (
+                                    <input
+                                        ref={editInputRef}
+                                        type="text"
+                                        value={editValue}
+                                        onChange={(e) => setEditValue(e.target.value)}
+                                        onBlur={() => handleEditSave(subtask.id)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") handleEditSave(subtask.id);
+                                            if (e.key === "Escape") handleEditCancel();
+                                        }}
+                                        autoFocus
+                                        className="flex-1 bg-transparent text-[13px] font-normal leading-snug outline-none"
+                                        style={{ color: "var(--color-text-secondary)" }}
+                                    />
+                                ) : (
+                                    <span
+                                        onClick={() => handleEditStart(subtask)}
+                                        className="flex-1 text-[13px] font-normal leading-snug transition-all duration-200 cursor-text"
+                                        style={{
+                                            color: subtask.completed ? "var(--color-text-tertiary)" : "var(--color-text-secondary)",
+                                            textDecoration: subtask.completed ? "line-through" : "none",
+                                            textDecorationColor: subtask.completed ? "var(--color-border)" : undefined,
+                                        }}
+                                    >
+                                        {subtask.text}
+                                    </span>
+                                )}
                                 <button
                                     onClick={() => onDelete(parentId, subtask.id)}
                                     aria-label={`Delete subtask "${subtask.text}"`}
