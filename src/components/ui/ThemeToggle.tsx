@@ -13,7 +13,7 @@ export function ThemeToggle({ isDark, toggle }: ThemeToggleProps) {
         <button
             onClick={toggle}
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            className="fixed top-6 right-6 z-50 flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-md transition-colors duration-300 cursor-pointer"
+            className="flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-md transition-colors duration-300 cursor-pointer"
             style={{
                 backgroundColor: "var(--color-toggle-bg)",
                 border: "1px solid var(--color-toggle-border)",

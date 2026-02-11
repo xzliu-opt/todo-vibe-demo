@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Github } from "lucide-react";
 import { useTodos } from "@/hooks/useTodos";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -35,24 +35,38 @@ export default function Home() {
 
   return (
     <div className="flex min-h-dvh flex-col" style={{ transition: "background-color 500ms, color 500ms" }}>
-      {/* Blog Nav Link */}
-      <a
-        href="https://blog.liuxiaozhi.org/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed top-6 z-50 flex items-center gap-1 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors duration-300"
-        style={{
-          right: "calc(1.5rem + 2.5rem + 1.5rem)",
-          color: "var(--color-text-secondary)",
-          lineHeight: "2.5rem",
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
-        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-secondary)")}
-      >
-        Blog
-        <ArrowUpRight size={10} />
-      </a>
-      <ThemeToggle isDark={isDark} toggle={toggleDark} />
+      {/* Top-right controls */}
+      <div className="fixed top-6 right-6 z-50 flex items-center gap-4">
+        {/* Blog Nav Link */}
+        <a
+          href="https://blog.liuxiaozhi.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors duration-300"
+          style={{ color: "var(--color-text-secondary)" }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-secondary)")}
+        >
+          Blog
+          <ArrowUpRight size={10} />
+        </a>
+
+        {/* GitHub Link */}
+        <a
+          href="https://github.com/xzliu-opt/todo-vibe-demo"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Star on GitHub"
+          className="flex items-center transition-colors duration-200"
+          style={{ color: "var(--color-text-secondary)" }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-secondary)")}
+        >
+          <Github size={18} strokeWidth={1.5} />
+        </a>
+
+        <ThemeToggle isDark={isDark} toggle={toggleDark} />
+      </div>
       <main className="flex flex-1 flex-col items-center px-4 pt-16 pb-8 sm:px-6 sm:pt-24">
         {/* Header */}
         <header className="mb-12 text-center">
