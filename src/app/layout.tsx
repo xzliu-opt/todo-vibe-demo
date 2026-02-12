@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Background from "@/components/Background";
 
 export const metadata: Metadata = {
   title: "flow.",
@@ -19,7 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <Background />
+        {children}
+      </body>
     </html>
   );
 }

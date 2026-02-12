@@ -129,9 +129,12 @@ export default function Home() {
             backgroundColor: "var(--color-surface)",
             boxShadow: "var(--shadow-surface)",
             border: "var(--border-surface)",
+            backdropFilter: "blur(80px)",
+            WebkitBackdropFilter: "blur(80px)",
             transition: "background-color 500ms, box-shadow 500ms, border 500ms",
           }}
         >
+
           {/* Input */}
           <div className="mb-8">
             <TodoInput onAdd={addTodo} placeholder={t.placeholder} />

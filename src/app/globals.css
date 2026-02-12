@@ -2,7 +2,7 @@
 
 :root {
   --color-bg: #f5f5f7;
-  --color-surface: #ffffff;
+  --color-surface: rgba(255, 255, 255, 0.7);
   --color-text: #1d1d1f;
   --color-text-secondary: #86868b;
   --color-text-tertiary: #aeaeb2;
@@ -41,8 +41,9 @@
 
 html.dark {
   --color-bg: #161618;
-  --color-surface: #1c1c1e;
+  --color-surface: rgba(28, 28, 30, 0.6);
   --color-input-bg: rgba(255, 255, 255, 0.08);
+
   --color-text: #f5f5f7;
   --color-text-secondary: #86868b;
   --color-text-tertiary: #636366;
@@ -97,4 +98,59 @@ body {
 
 ::selection {
   background-color: rgba(0, 122, 255, 0.15);
+}
+
+/* Background Blob Colors */
+:root {
+  --color-blob-1: rgba(100, 180, 255, 0.4);
+  --color-blob-2: rgba(200, 150, 255, 0.3);
+  --color-blob-3: rgba(180, 255, 200, 0.3);
+}
+
+html.dark {
+  --color-blob-1: rgba(40, 40, 120, 0.5);
+  --color-blob-2: rgba(80, 30, 100, 0.4);
+  --color-blob-3: rgba(30, 80, 80, 0.4);
+}
+
+@keyframes blob-bounce {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(20px, -20px) scale(1.1);
+  }
+
+  50% {
+    transform: translate(-10px, 20px) scale(0.9);
+  }
+
+  75% {
+    transform: translate(-20px, -10px) scale(1.05);
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes blob-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-blob-bounce {
+  animation: blob-bounce 40s infinite ease-in-out alternate;
+}
+
+.animate-blob-pulse {
+  animation: blob-pulse 10s infinite ease-in-out;
 }
