@@ -2,11 +2,12 @@
 
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, ChevronRight, GripVertical, Star, Trash2 } from "lucide-react";
+import { Bell, ChevronRight, GripVertical, Star, Trash2, Lightbulb } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { SubtaskList } from "@/components/todo/SubtaskList";
+import { NoteOverlay } from "@/components/todo/NoteOverlay";
 import { formatTime, formatDuration } from "@/lib/time";
 import type { Todo } from "@/types/todo";
 
@@ -20,6 +21,7 @@ interface TodoItemProps {
     todo: Todo;
     onToggle: (id: string) => void;
     onUpdate: (id: string, text: string) => void;
+    onUpdateNotes: (id: string, notes: string) => void;
     onDelete: (id: string) => void;
     onToggleFavorite: (id: string) => void;
     onSetReminder: (id: string, timestamp: number) => void;
@@ -32,9 +34,10 @@ interface TodoItemProps {
     labels?: TodoLabels;
 }
 
-export function TodoItem({ todo, onToggle, onUpdate, onDelete, onToggleFavorite, onSetReminder, onClearReminder, onAddSubtask, onUpdateSubtask, onToggleSubtask, onDeleteSubtask, subtaskPlaceholder, labels }: TodoItemProps) {
+export function TodoItem({ todo, onToggle, onUpdate, onUpdateNotes, onDelete, onToggleFavorite, onSetReminder, onClearReminder, onAddSubtask, onUpdateSubtask, onToggleSubtask, onDeleteSubtask, subtaskPlaceholder, labels }: TodoItemProps) {
     const [showClearHint, setShowClearHint] = useState(false);
     const [expanded, setExpanded] = useState(false);
+    const [showNotes, setShowNotes] = useState(false);
     const dateInputRef = useRef<HTMLInputElement>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState(todo.text);
@@ -65,6 +68,7 @@ export function TodoItem({ todo, onToggle, onUpdate, onDelete, onToggleFavorite,
     const subtaskCount = todo.subtasks.length;
     const doneCount = todo.subtasks.filter((s) => s.completed).length;
     const hasSubtasks = subtaskCount > 0;
+    const hasNotes = !!todo.notes && todo.notes.trim().length > 0;
 
     const handleEditStart = () => {
         if (todo.completed) return; // Prevent editing completed todos
@@ -168,6 +172,7 @@ export function TodoItem({ todo, onToggle, onUpdate, onDelete, onToggleFavorite,
                     />
                 </motion.button>
 
+
                 <div className="flex-1 min-w-0">
                     {isEditing ? (
                         <input
@@ -248,74 +253,99 @@ export function TodoItem({ todo, onToggle, onUpdate, onDelete, onToggleFavorite,
                     )}
                 </div>
 
-                {/* Reminder bell */}
-                {!todo.completed && (
-                    <div
-                        className="relative flex items-center"
-                        onMouseEnter={() => todo.reminderAt && setShowClearHint(true)}
-                        onMouseLeave={() => setShowClearHint(false)}
+                {/* Action Icons Group */}
+                <div className="flex items-center gap-3">
+                    {/* Notes Icon */}
+                    <motion.button
+                        onClick={() => setShowNotes(true)}
+                        aria-label="Add notes"
+                        className="flex items-center justify-center h-8 w-8 mt-0.5 rounded-full cursor-pointer transition-all duration-200"
+                        style={{
+                            color: hasNotes ? "#facc15" : "var(--color-text-tertiary)",
+                            opacity: hasNotes ? 1 : undefined,
+                        }}
+                        whileTap={{ scale: 1.2 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 15 }}
                     >
-                        <motion.button
-                            onClick={() => {
-                                if (todo.reminderAt) {
-                                    onClearReminder(todo.id);
-                                    setShowClearHint(false);
-                                } else {
-                                    dateInputRef.current?.showPicker();
-                                }
-                            }}
-                            aria-label={todo.reminderAt ? "Clear reminder" : "Set reminder"}
-                            className="flex items-center justify-center h-8 w-8 mt-0.5 rounded-full cursor-pointer transition-all duration-200"
+                        <Lightbulb
+                            size={14}
+                            strokeWidth={1.5}
+                            className={hasNotes ? "" : "opacity-0 group-hover:opacity-40 transition-opacity duration-150"}
                             style={{
-                                color: todo.reminderAt ? "#3b82f6" : "var(--color-text-tertiary)",
-                                opacity: todo.reminderAt ? 1 : undefined,
-                            }}
-                            whileTap={{ scale: 1.3 }}
-                            transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                        >
-                            <Bell
-                                size={14}
-                                strokeWidth={1.5}
-                                className={todo.reminderAt ? "" : "opacity-0 group-hover:opacity-40 transition-opacity duration-150"}
-                                style={{
-                                    fill: todo.reminderAt ? "#3b82f6" : "none",
-                                }}
-                            />
-                        </motion.button>
-
-                        {/* Hidden datetime input */}
-                        <input
-                            ref={dateInputRef}
-                            type="datetime-local"
-                            className="absolute inset-0 opacity-0 pointer-events-none w-0 h-0"
-                            tabIndex={-1}
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                if (val) {
-                                    onSetReminder(todo.id, new Date(val).getTime());
-                                    e.target.value = "";
-                                }
+                                fill: hasNotes ? "#facc15" : "none",
                             }}
                         />
+                    </motion.button>
 
-                        {/* Clear hint tooltip */}
-                        {showClearHint && todo.reminderAt && (
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg px-2 py-1 text-[9px] font-medium"
-                                style={{
-                                    backgroundColor: "var(--color-surface)",
-                                    color: "var(--color-text-secondary)",
-                                    boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
-                                    border: "1px solid var(--color-border-light)",
+                    {/* Reminder bell */}
+                    {!todo.completed && (
+                        <div
+                            className="relative flex items-center"
+                            onMouseEnter={() => todo.reminderAt && setShowClearHint(true)}
+                            onMouseLeave={() => setShowClearHint(false)}
+                        >
+                            <motion.button
+                                onClick={() => {
+                                    if (todo.reminderAt) {
+                                        onClearReminder(todo.id);
+                                        setShowClearHint(false);
+                                    } else {
+                                        dateInputRef.current?.showPicker();
+                                    }
                                 }}
+                                aria-label={todo.reminderAt ? "Clear reminder" : "Set reminder"}
+                                className="flex items-center justify-center h-8 w-8 mt-0.5 rounded-full cursor-pointer transition-all duration-200"
+                                style={{
+                                    color: todo.reminderAt ? "#3b82f6" : "var(--color-text-tertiary)",
+                                    opacity: todo.reminderAt ? 1 : undefined,
+                                }}
+                                whileTap={{ scale: 1.3 }}
+                                transition={{ type: "spring", stiffness: 500, damping: 15 }}
                             >
-                                Click to clear
-                            </motion.div>
-                        )}
-                    </div>
-                )}
+                                <Bell
+                                    size={14}
+                                    strokeWidth={1.5}
+                                    className={todo.reminderAt ? "" : "opacity-0 group-hover:opacity-40 transition-opacity duration-150"}
+                                    style={{
+                                        fill: todo.reminderAt ? "#3b82f6" : "none",
+                                    }}
+                                />
+                            </motion.button>
+
+                            {/* Hidden datetime input */}
+                            <input
+                                ref={dateInputRef}
+                                type="datetime-local"
+                                className="absolute inset-0 opacity-0 pointer-events-none w-0 h-0"
+                                tabIndex={-1}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (val) {
+                                        onSetReminder(todo.id, new Date(val).getTime());
+                                        e.target.value = "";
+                                    }
+                                }}
+                            />
+
+                            {/* Clear hint tooltip */}
+                            {showClearHint && todo.reminderAt && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg px-2 py-1 text-[9px] font-medium"
+                                    style={{
+                                        backgroundColor: "var(--color-surface)",
+                                        color: "var(--color-text-secondary)",
+                                        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                                        border: "1px solid var(--color-border-light)",
+                                    }}
+                                >
+                                    Click to clear
+                                </motion.div>
+                            )}
+                        </div>
+                    )}
+                </div>
 
                 <button
                     onClick={() => onDelete(todo.id)}
@@ -334,6 +364,14 @@ export function TodoItem({ todo, onToggle, onUpdate, onDelete, onToggleFavorite,
                     <Trash2 className="h-4 w-4" />
                 </button>
             </motion.div>
+
+            {/* Note Overlay */}
+            <NoteOverlay
+                isOpen={showNotes}
+                onClose={() => setShowNotes(false)}
+                onSave={(notes) => onUpdateNotes(todo.id, notes)}
+                initialNotes={todo.notes || ""}
+            />
 
             {/* Expandable subtask list */}
             {!todo.completed && (

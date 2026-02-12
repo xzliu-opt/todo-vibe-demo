@@ -177,5 +177,11 @@ export function useTodos() {
         });
     }, []);
 
-    return { todos, isLoaded, addTodo, toggleTodo, updateTodo, toggleFavorite, setReminder, clearReminder, addSubtask, updateSubtask, toggleSubtask, deleteSubtask, deleteTodo, clearCompleted, reorderTodos };
+    const updateNotes = useCallback((id: string, notes: string) => {
+        setTodos((prev) =>
+            prev.map((todo) => (todo.id === id ? { ...todo, notes } : todo))
+        );
+    }, []);
+
+    return { todos, isLoaded, addTodo, toggleTodo, updateTodo, updateNotes, toggleFavorite, setReminder, clearReminder, addSubtask, updateSubtask, toggleSubtask, deleteSubtask, deleteTodo, clearCompleted, reorderTodos };
 }

@@ -22,6 +22,7 @@ export default function Home() {
     addTodo,
     toggleTodo,
     updateTodo,
+    updateNotes,
     toggleFavorite,
     setReminder,
     clearReminder,
@@ -186,6 +187,7 @@ export default function Home() {
                 todos={filteredTodos}
                 onToggle={toggleTodo}
                 onUpdate={updateTodo}
+                onUpdateNotes={updateNotes}
                 onDelete={deleteTodo}
                 onReorder={reorderTodos}
                 onToggleFavorite={toggleFavorite}

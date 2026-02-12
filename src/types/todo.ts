@@ -9,6 +9,7 @@ export interface Todo {
   text: string;
   completed: boolean;
   isFavorite: boolean;
+  notes?: string;
   reminderAt: number | null;
   subtasks: Subtask[];
   createdAt: number;

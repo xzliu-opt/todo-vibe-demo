@@ -22,6 +22,7 @@ interface TodoListProps {
     todos: Todo[];
     onToggle: (id: string) => void;
     onUpdate: (id: string, text: string) => void;
+    onUpdateNotes: (id: string, notes: string) => void;
     onDelete: (id: string) => void;
     onReorder: (activeId: string, overId: string) => void;
     onToggleFavorite: (id: string) => void;
@@ -37,7 +38,7 @@ interface TodoListProps {
     labels?: TodoLabels;
 }
 
-export function TodoList({ todos, onToggle, onUpdate, onDelete, onReorder, onToggleFavorite, onSetReminder, onClearReminder, onAddSubtask, onUpdateSubtask, onToggleSubtask, onDeleteSubtask, subtaskPlaceholder, emptyStateTitle, emptyStateSubtitle, labels }: TodoListProps) {
+export function TodoList({ todos, onToggle, onUpdate, onUpdateNotes, onDelete, onReorder, onToggleFavorite, onSetReminder, onClearReminder, onAddSubtask, onUpdateSubtask, onToggleSubtask, onDeleteSubtask, subtaskPlaceholder, emptyStateTitle, emptyStateSubtitle, labels }: TodoListProps) {
     const pointerSensor = useSensor(PointerSensor, {
         activationConstraint: { distance: 5 },
     });
@@ -94,6 +95,7 @@ export function TodoList({ todos, onToggle, onUpdate, onDelete, onReorder, onTog
                                     todo={todo}
                                     onToggle={onToggle}
                                     onUpdate={onUpdate}
+                                    onUpdateNotes={onUpdateNotes}
                                     onDelete={onDelete}
                                     onToggleFavorite={onToggleFavorite}
                                     onSetReminder={onSetReminder}
