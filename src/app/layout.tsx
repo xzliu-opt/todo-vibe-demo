@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Background from "@/components/Background";
+import { LanguageProvider } from "@/hooks/useLanguage";
 
 export const metadata: Metadata = {
   title: "flow.",
@@ -22,7 +23,9 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <Background />
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );
